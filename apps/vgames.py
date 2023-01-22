@@ -10,8 +10,8 @@ from app import app
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-dfv = pd.read_csv(DATA_PATH.joinpath("vgsales.csv"))  # GregorySmith Kaggle
-sales_list = ["North American Sales", "EU Sales", "Japan Sales", "Other Sales",	"World Sales"]
+dfv = pd.read_csv(DATA_PATH.joinpath("importsConsumptionAIR_CNT.csv"))  # GregorySmith Kaggle
+sales_list = ["NAICS 3 Consumption Imports by Air & Container"]
 
 
 layout = html.Div([
@@ -20,7 +20,7 @@ layout = html.Div([
     html.Div([
         html.Div(dcc.Dropdown(
             id='genre-dropdown', value='Strategy', clearable=False,
-            options=[{'label': x, 'value': x} for x in sorted(dfv.Genre.unique())]
+            options=[{'label': x, 'value': x} for x in sorted(dfv['NAICS_SDESC'].unique())]
         ), className='six columns'),
 
         html.Div(dcc.Dropdown(
@@ -39,9 +39,12 @@ layout = html.Div([
     [Input(component_id='genre-dropdown', component_property='value'),
      Input(component_id='sales-dropdown', component_property='value')]
 )
-def display_value(genre_chosen, sales_chosen):
-    dfv_fltrd = dfv[dfv['Genre'] == genre_chosen]
-    dfv_fltrd = dfv_fltrd.nlargest(10, sales_chosen)
-    fig = px.bar(dfv_fltrd, x='Video Game', y=sales_chosen, color='Platform')
-    fig = fig.update_yaxes(tickprefix="$", ticksuffix="M")
+def display_value():
+    # dfv_fltrd = dfv[dfv['Genre'] == genre_chosen]
+    # dfv_fltrd = dfv_fltrd.nlargest(10, sales_chosen)
+    # fig = px.bar(dfv_fltrd, x='Video Game', y=sales_chosen, color='Platform')
+    fig = px.bar(dfv, x="NAICS_SDESC", y=['AIR_VAL_MO','CNT_VAL_MO'], 
+                        title="NAICS3 Consumption Imports by Air & Container 2022")
+# fig.show()
+    # fig = fig.update_yaxes(tickprefix="$", ticksuffix="M")
     return fig
